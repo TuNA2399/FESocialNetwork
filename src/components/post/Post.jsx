@@ -13,7 +13,7 @@ const Post = ({ post }) => {
   const [commentOpen, setCommentOpen] = useState(false);
 
   //TEMPORARY
-  const liked = false;
+  const liked = true;
 
   return (
     <div className="post">
@@ -39,7 +39,7 @@ const Post = ({ post }) => {
         </div>
         <div className="info">
           <div className="item">
-            {liked ? <FavoriteOutlinedIcon /> : <FavoriteBorderOutlinedIcon />}
+            {liked ? <FavoriteOutlinedIcon style={{color: "red"}}/> : <FavoriteBorderOutlinedIcon />}
             12 Likes
           </div>
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
@@ -51,7 +51,7 @@ const Post = ({ post }) => {
             Share
           </div>
         </div>
-        {commentOpen && <Comments />}
+        {commentOpen && <Comments postId={post.id}/>}
       </div>
     </div>
   );
