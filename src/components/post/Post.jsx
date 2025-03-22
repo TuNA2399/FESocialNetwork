@@ -22,7 +22,6 @@ const Post = ({ post }) => {
     queryKey: ["likes", post.id],
     queryFn: async () => {
       const res = await makeRequest.get("/likes?postId=" + post.id);
-      // console.log("API Response:", res.data); // Debug dữ liệu API trả về
       return res.data;
     }
   });
