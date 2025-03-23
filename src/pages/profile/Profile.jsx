@@ -72,12 +72,12 @@ const Profile = () => {
       {isLoading ? "Loading..." : <>
         <div className="images">
           <img
-            src={data.coverPic}
+            src={"/upload/" + data.coverPic}
             alt=""
             className="cover"
           />
           <img
-            src={data.profilePic}
+            src={"/upload/" + data.profilePic}
             alt=""
             className="profilePic"
           />
@@ -114,7 +114,7 @@ const Profile = () => {
                 </div>
               </div>
               {relationshipLoading ? "Loading..."
-                : (data.id === currentUser.id 
+                : (data.id === currentUser.id
                   ? (<button onClick={() => setOpenUpdate(true)}>Update</button>)
                   : <button onClick={handleFollow}>{relationshipData.includes(currentUser.id) ? "Unfollow" : "Follow"}</button>)}
             </div>
@@ -123,10 +123,10 @@ const Profile = () => {
               <MoreVertIcon />
             </div>
           </div>
-          <Posts userId ={userId}/>
+          <Posts userId={userId} />
         </div>
       </>}
-      {openUpdate && <Update setOpenUpdate={setOpenUpdate} user={data}/>}
+      {openUpdate && <Update setOpenUpdate={setOpenUpdate} user={data} />}
     </div>
   );
 };
