@@ -16,40 +16,36 @@ const RightBar = () => {
     },
   });
 
-  console.log("Hello, world!");
-
+  const { isLoading: unfollowedLoading, error: unfollowedErr, data: unfollowedData } = useQuery({
+    queryKey: ["unfollowedUsers", currentUser.id],
+    queryFn: async () => {
+      const res = await makeRequest.get("/relationships/unfollowed");
+      return res.data;
+    },
+  });
 
   return (
     <div className="rightBar">
       <div className="container">
         <div className="item">
           <span>Suggestions For You</span>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                alt=""
-              />
-              <span>Jane Doe</span>
-            </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
-          <div className="user">
-            <div className="userInfo">
-              <img
-                src="https://images.pexels.com/photos/4881619/pexels-photo-4881619.jpeg?auto=compress&cs=tinysrgb&w=1600"
-                alt=""
-              />
-              <span>Jane Doe</span>
-            </div>
-            <div className="buttons">
-              <button>follow</button>
-              <button>dismiss</button>
-            </div>
-          </div>
+          {unfollowedLoading
+            ? "Loading..."
+            : (unfollowedData.map((user) => [
+              <div className="user">
+                <div className="userInfo">
+                  <img
+                    src={user.profilePic || "https://via.placeholder.com/50"}
+                    alt={user.name}
+                  />
+                  <span>{user.name}</span>
+                </div>
+                <div className="buttons">
+                  <button>Follow</button>
+                </div>
+              </div>
+            ]))}
+
         </div>
         <div className="item">
           <span>Latest Activities</span>
