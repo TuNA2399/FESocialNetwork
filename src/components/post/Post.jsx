@@ -67,7 +67,15 @@ const Post = ({ post }) => {
   const handleDelete = () => {
     console.log("Post ID being deleted:", post.id);
     deleteMutation.mutate(post.id);
-};
+  };
+
+  const { isLoading: isCommentLoading, error: commentErr, data: commentData } = useQuery({
+    queryKey: ["commentsNumber", post.id],
+    queryFn: async () => {
+      const res = await makeRequest.get("/comments?postId=" + post.id);
+      return res.data;
+    }
+  });
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -108,7 +116,7 @@ const Post = ({ post }) => {
 
           <div className="item" onClick={() => setCommentOpen(!commentOpen)}>
             <TextsmsOutlinedIcon />
-            12 Comments
+            {isCommentLoading ? "Loading..." : `${commentData?.length || 0} Comments`}
           </div>
           <div className="item">
             <ShareOutlinedIcon />
