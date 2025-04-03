@@ -3,13 +3,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { AuthContext } from "../../context/authContext";
 import { makeRequest } from "../../axios";
+import { Link } from "react-router-dom";
 
 const RightBar = () => {
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["friends", currentUser?.id],  
+    queryKey: ["friends", currentUser?.id],
     queryFn: async () => {
       const res = await makeRequest.get("/relationships/friends");
       return res.data;
@@ -46,7 +47,7 @@ const RightBar = () => {
   const handleFollow = (userId) => {
     mutationFollow.mutate(userId);
   };
-  
+
 
   return (
     <div className="rightBar">
@@ -62,20 +63,27 @@ const RightBar = () => {
               ) : unfollowedErr ? (
                 "Error loading suggestions"
               ) : (
-                unfollowedData.map((user) => (
-                  <div className="user" key={user.id}>
-                    <div className="userInfo">
-                      <img
-                        src={"/upload/" + user.profilePic || "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"}
-                        alt={user.name}
-                      />
-                      <span>{user.name}</span>
+                [...unfollowedData]
+                  .sort(() => Math.random() - 0.5) // Shuffle the array randomly
+                  .slice(0, 3) // Take only the first 4 users
+                  .map((user) => (
+                    <div className="user" key={user.id}>
+                      <div className="userInfo">
+                        <img
+                          src={
+                            user.profilePic
+                              ? "/upload/" + user.profilePic
+                              : "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
+                          }
+                          alt={user.name}
+                        />
+                        <span>{user.name}</span>
+                      </div>
+                      <div className="buttons">
+                        <button onClick={() => handleFollow(user.id)}>Follow</button>
+                      </div>
                     </div>
-                    <div className="buttons">
-                      <button onClick={() => handleFollow(user.id)}>Follow</button>
-                    </div>
-                  </div>
-                ))
+                  ))
               )}
             </div>
 
@@ -112,7 +120,12 @@ const RightBar = () => {
                         alt={user.name}
                       />
                       <div className="online" />
-                      <span>{user.name}</span>
+                      <Link
+                        to={`/profile/${user.id}`}
+                        style={{ textDecoration: "none", color: "inherit" }}
+                        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+                        <span>{user.name}</span>
+                      </Link>
                     </div>
                   </div>
                 ))
