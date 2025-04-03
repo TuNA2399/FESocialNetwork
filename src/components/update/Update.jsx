@@ -69,7 +69,7 @@ const Update = ({ setOpenUpdate, user }) => {
 
                 <button className="update-button" onClick={handleSubmit}>Update</button>
             </form>
-            <button className="close-button" onClick={() => setOpenUpdate(false)}>X</button>
+            <button className="close-button" onClick={() => setOpenUpdate(false)}>Cancel</button>
         </div>
 
 

@@ -12,9 +12,6 @@ const Posts = ({ userId }) => {
     }
   });
 
-  // console.log(data);
-
-
   return (
     <div className="posts">
       {error ? (

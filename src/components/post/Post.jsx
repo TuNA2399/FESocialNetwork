@@ -103,7 +103,11 @@ const Post = ({ post }) => {
         </div>
         <div className="content">
           <p>{post.desc}</p>
-          <img src={"./upload/" + post.img} alt="" />
+          <img
+            src={post.img ? `/upload/${post.img}` : "https://via.placeholder.com/150"}
+            alt="Post"
+            onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+          />
         </div>
         <div className="info">
           <div className="item">
