@@ -1,13 +1,69 @@
-.update{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 50%;
-    height: 50%;
-    background-color: white;
-    padding: 50px;
-    z-index: 999;
-}
+.update-form {
+    width: 400px;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    h2 {
+      text-align: center;
+      font-size: 1.5rem;
+      color: #333;
+    }
+  
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+  
+      label {
+        font-size: 0.9rem;
+        color: #555;
+        margin-bottom: 5px;
+      }
+  
+      input {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+  
+      .update-button {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+  
+        &:hover {
+          background-color: #45a049;
+        }
+      }
+    }
+  
+    .close-button {
+      background-color: #ff4d4d;
+      color: white;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: 0.3s;
+  
+      &:hover {
+        background-color: #cc0000;
+      }
+    }
+  }
+  
