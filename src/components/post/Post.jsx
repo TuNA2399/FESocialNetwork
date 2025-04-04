@@ -86,9 +86,9 @@ const Post = ({ post }) => {
         <div className="user">
           <div className="userInfo">
             <img
-              src={post.profilePic ? `/upload/${post.profilePic}` : "https://via.placeholder.com/150"}
+              src={post.profilePic ? `/upload/${post.profilePic}` : "/upload/tuna.png"}
               alt="avt"
-              onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+              onError={(e) => (e.target.src = "")}
             />
             <div className="details">
               <Link
@@ -108,9 +108,9 @@ const Post = ({ post }) => {
         <div className="content">
           <p>{post.desc}</p>
           <img
-            src={post.img ? `/upload/${post.img}` : "https://via.placeholder.com/150"}
+            src={post.img ? `/upload/${post.img}` : "/upload/tuna.png"}
             alt="Post"
-            onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+            onError={(e) => (e.target.src = "")}
           />
         </div>
         <div className="info">

@@ -38,7 +38,11 @@ const Comments = ({ postId }) => {
   return (
     <div className="comments">
       <div className="write">
-        <img src={currentUser.profilePic} alt="" />
+        <img
+          src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "/upload/tuna.png"}
+          alt="avt"
+          onError={(e) => (e.target.src = "")}
+        />
         <input type="text" placeholder="Write a comment" onChange={(e) => setDesc(e.target.value)} value={desc} />
         <button onClick={handleClick}>Send</button>
       </div>
@@ -46,7 +50,11 @@ const Comments = ({ postId }) => {
         ? "loading"
         : data.map((comment) => (
           <div className="comment" key={comment.div}>
-            <img src={comment.profilePic} alt="" />
+            <img
+              src={comment.profilePic ? `/upload/${comment.profilePic}` : "/upload/tuna.png"}
+              alt="cmt"
+              onError={(e) => (e.target.src = "")}
+            />
             <div className="info">
               <span>{comment.name}</span>
               <p>{comment.desc}</p>

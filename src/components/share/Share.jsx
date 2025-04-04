@@ -52,9 +52,9 @@ const Share = () => {
         <div className="top">
           <div className="left">
             <img
-              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "https://via.placeholder.com/150"}
+              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "/upload/tuna.png"}
               alt=""
-              onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+              onError={(e) => (e.target.src = "")}
             />
             <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)} value={desc} />
           </div>

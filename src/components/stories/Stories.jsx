@@ -1,54 +1,102 @@
-import { useContext } from "react";
-import "./stories.scss"
-import { AuthContext } from "../../context/authContext"
+import "./stories.scss";
+import { AuthContext } from "../../context/authContext";
+import { useState, useContext } from "react";
+import { makeRequest } from "../../axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Stories = () => {
+  const { currentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+  const [file, setFile] = useState(null);
 
-  const { currentUser } = useContext(AuthContext)
+  const { isLoading, error, data } = useQuery({
+    queryKey: ["stories", currentUser?.id],
+    queryFn: async () => {
+      const res = await makeRequest.get("/stories");
+      return res.data;
+    },
+  });
 
-  //TEMPORARY
-  const stories = [
-    {
-      id: 1,
-      name: "John Doe",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+  const mutation = useMutation({
+    mutationFn: async (newStory) => {
+      const res = await makeRequest.post("/stories", newStory);
+      return res.data;
     },
-    {
-      id: 2,
-      name: "John Doe",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
+    onSuccess: () => {
+      queryClient.invalidateQueries(["stories"]);
     },
-    {
-      id: 3,
-      name: "John Doe",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-    {
-      id: 4,
-      name: "John Doe",
-      img: "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load",
-    },
-  ];
+  });
+
+  const upload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await makeRequest.post("/upload", formData);
+      return res.data;
+    } catch (err) {
+      console.log(err);
+      return "";
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    if (selectedFile) {
+      const imgUrl = await upload(selectedFile); // Upload the image immediately
+      if (imgUrl) {
+        mutation.mutate({ img: imgUrl }); // Add the story with the uploaded image
+        setFile(null); // Reset the file input
+      }
+    }
+  };
 
   return (
     <div className="stories">
       <div className="story">
         <img
-          src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "https://via.placeholder.com/150"}
-          alt="str"
-          onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+          src={
+            currentUser.profilePic
+              ? `/upload/${currentUser.profilePic}`
+              : "/upload/tuna.png"
+          }
+          alt="story"
+          onError={(e) => (e.target.src = "")}
         />
-        <span>{currentUser.name}</span>
-        <button>+</button>
-      </div>
-      {stories.map(story => (
-        <div className="story" key={story.id}>
-          <img src={story.img} alt="" />
-          <span>{story.name}</span>
-        </div>
-      ))}
-    </div>
-  )
-}
+        <input
+          type="file"
+          id="file"
+          style={{ display: "none" }}
+          onChange={handleFileChange} // Trigger story creation on file change
+        />
 
-export default Stories
+        <label htmlFor="file">
+          <div className="item clickable">
+            <img src="your-upload-icon.png" alt="upload" />
+            <span className="plus">+</span>
+          </div>
+        </label>
+      </div>
+
+      {isLoading ? (
+        <p>Loading stories...</p>
+      ) : error ? (
+        <p>Something went wrong.</p>
+      ) : (
+        data?.map((story) => (
+          <div className="story" key={story.id}>
+            <img
+              src={`/upload/${story.img}`}
+              alt={story.name}
+              onError={(e) => (e.target.src = "")}
+            />
+            <span>{story.name}</span>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+export default Stories;
