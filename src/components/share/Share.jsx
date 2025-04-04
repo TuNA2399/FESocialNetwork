@@ -52,13 +52,14 @@ const Share = () => {
         <div className="top">
           <div className="left">
             <img
-              src={currentUser.profilePic}
+              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "https://via.placeholder.com/150"}
               alt=""
+              onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
             />
-            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)}  value={desc}/>
+            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)} value={desc} />
           </div>
           <div className="right">
-            {file && <img className="file" alt="" src={URL.createObjectURL(file)}/>}
+            {file && <img className="file" alt="" src={URL.createObjectURL(file)} />}
           </div>
         </div>
         <hr />

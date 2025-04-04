@@ -26,8 +26,9 @@ const LeftBar = () => {
         <div className="menu">
           <div className="user">
             <img
-              src={currentUser.profilePic}
+              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "https://via.placeholder.com/150"}
               alt=""
+              onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
             />
             <Link to={`/profile/${currentUser.id}`}
               style={{ textDecoration: "none", color: "inherit" }}
