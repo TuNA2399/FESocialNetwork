@@ -85,7 +85,11 @@ const Post = ({ post }) => {
       <div className="container">
         <div className="user">
           <div className="userInfo">
-            <img src={post.profilePic} alt="" />
+            <img
+              src={post.profilePic ? `/upload/${post.profilePic}` : "https://via.placeholder.com/150"}
+              alt="avt"
+              onError={(e) => (e.target.src = "https://via.placeholder.com/150")}
+            />
             <div className="details">
               <Link
                 to={`/profile/${post.userId}`}
