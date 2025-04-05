@@ -38,13 +38,15 @@ const Navbar = () => {
         <PersonOutlinedIcon />
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
-        <div className="user">
-          <img
-            src={currentUser.profilePic}
-            alt=""
-          />
-          <span>{currentUser.name}</span>
-        </div>
+        <Link style={{textDecoration:"none"}} to={`/profile/${currentUser.id}`}>
+          <div className="user">
+            <img
+              src={`/upload/${currentUser.profilePic}`}
+              alt=""
+            />
+            <span>{currentUser.name}</span>
+          </div>
+        </Link>
       </div>
     </div>
   );
