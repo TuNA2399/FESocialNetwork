@@ -116,7 +116,7 @@ const RightBar = () => {
                   <div className="user" key={user.id}>
                     <div className="userInfo">
                       <img
-                        src={"/upload/" + user.profilePic || "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"}
+                        src={`/upload/${user.profilePic}` || "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"}
                         alt={user.name}
                       />
                       <div className="online" />
