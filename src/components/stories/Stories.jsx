@@ -44,10 +44,10 @@ const Stories = () => {
     setFile(selectedFile);
 
     if (selectedFile) {
-      const imgUrl = await upload(selectedFile); // Upload the image immediately
+      const imgUrl = await upload(selectedFile);
       if (imgUrl) {
-        mutation.mutate({ img: imgUrl }); // Add the story with the uploaded image
-        setFile(null); // Reset the file input
+        mutation.mutate({ img: imgUrl });
+        setFile(null);
       }
     }
   };
@@ -66,12 +66,11 @@ const Stories = () => {
         />
         <input
           type="file"
-          id="file"
+          id="storyFile"
           style={{ display: "none" }}
-          onChange={handleFileChange} // Trigger story creation on file change
+          onChange={handleFileChange}
         />
-
-        <label htmlFor="file">
+        <label htmlFor="storyFile">
           <div className="item clickable">
             <img src="your-upload-icon.png" alt="upload" />
             <span className="plus">+</span>

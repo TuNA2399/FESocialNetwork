@@ -12,20 +12,19 @@ const Share = () => {
   const [file, setFile] = useState(null);
   const [desc, setDesc] = useState("");
 
+  const { currentUser } = useContext(AuthContext);
+  const queryClient = useQueryClient();
+
   const upload = async () => {
     try {
       const formData = new FormData();
-      formData.append("file", file)
+      formData.append("file", file);
       const res = await makeRequest.post("/upload", formData);
       return res.data;
     } catch (err) {
       console.log(err);
     }
-  }
-
-  const { currentUser } = useContext(AuthContext)
-
-  const queryClient = useQueryClient();
+  };
 
   const mutation = useMutation({
     mutationFn: async (newPost) => {
@@ -33,18 +32,18 @@ const Share = () => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["post"])
+      queryClient.invalidateQueries(["post"]);
     },
-  })
+  });
 
   const handleClick = async (e) => {
     e.preventDefault();
     let imgUrl = "";
     if (file) imgUrl = await upload();
-    mutation.mutate({ desc, img: imgUrl })
+    mutation.mutate({ desc, img: imgUrl });
     setDesc("");
-    setFile(null)
-  }
+    setFile(null);
+  };
 
   return (
     <div className="share">
@@ -56,7 +55,12 @@ const Share = () => {
               alt=""
               onError={(e) => (e.target.src = "")}
             />
-            <input type="text" placeholder={`What's on your mind ${currentUser.name}?`} onChange={(e) => setDesc(e.target.value)} value={desc} />
+            <input
+              type="text"
+              placeholder={`What's on your mind ${currentUser.name}?`}
+              onChange={(e) => setDesc(e.target.value)}
+              value={desc}
+            />
           </div>
           <div className="right">
             {file && <img className="file" alt="" src={URL.createObjectURL(file)} />}
@@ -65,17 +69,25 @@ const Share = () => {
         <hr />
         <div className="bottom">
           <div className="left">
-            <input type="file" id="file" style={{ display: "none" }} onChange={(e) => setFile(e.target.files[0])} />
-            <label htmlFor="file">
+            {/* ✅ Fixed: unique ID for post file input */}
+            <input
+              type="file"
+              id="postFile"
+              style={{ display: "none" }}
+              onChange={(e) => setFile(e.target.files[0])}
+            />
+            <label htmlFor="postFile">
               <div className="item">
                 <img src={Image} alt="" />
                 <span>Add Image</span>
               </div>
             </label>
+
             <div className="item">
               <img src={Map} alt="" />
               <span>Add Place</span>
             </div>
+
             <div className="item">
               <img src={Friend} alt="" />
               <span>Tag Friends</span>
