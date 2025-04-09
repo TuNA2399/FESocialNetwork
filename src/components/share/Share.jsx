@@ -4,7 +4,7 @@ import Map from "../../assets/map.png";
 import Friend from "../../assets/friend.png";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/authContext";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import axios from "axios";
 
@@ -15,14 +15,31 @@ const Share = () => {
   const { currentUser } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
+  const getSignature = async () => {
+    const res = await makeRequest.get("/signature");
+    return res.data;
+  };
+
   const upload = async () => {
     try {
+      const signatureData = await getSignature();
+
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+      formData.append("api_key", signatureData.apiKey);
+      formData.append("timestamp", signatureData.timestamp);
+      formData.append("signature", signatureData.signature);
+      formData.append("folder", signatureData.folder);
+      formData.append("upload_preset", signatureData.uploadPreset);
+
+      const cloudinaryRes = await axios.post(
+        `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/auto/upload`,
+        formData
+      );
+
+      return cloudinaryRes.data.secure_url;
     } catch (err) {
-      console.log(err);
+      console.error("Cloudinary upload error:", err);
     }
   };
 
@@ -51,7 +68,11 @@ const Share = () => {
         <div className="top">
           <div className="left">
             <img
-              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "/upload/tuna.png"}
+              src={
+                currentUser.profilePic
+                  ? `/upload/${currentUser.profilePic}`
+                  : "/upload/tuna.png"
+              }
               alt=""
               onError={(e) => (e.target.src = "")}
             />
@@ -63,13 +84,14 @@ const Share = () => {
             />
           </div>
           <div className="right">
-            {file && <img className="file" alt="" src={URL.createObjectURL(file)} />}
+            {file && (
+              <img className="file" alt="" src={URL.createObjectURL(file)} />
+            )}
           </div>
         </div>
         <hr />
         <div className="bottom">
           <div className="left">
-            {/* ✅ Fixed: unique ID for post file input */}
             <input
               type="file"
               id="postFile"
