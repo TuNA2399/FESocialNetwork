@@ -58,8 +58,6 @@ const Stories = () => {
         <img
           src={
             currentUser.profilePic
-              ? `/upload/${currentUser.profilePic}`
-              : "/upload/tuna.png"
           }
           alt="story"
           onError={(e) => (e.target.src = "")}

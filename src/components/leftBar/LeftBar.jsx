@@ -26,7 +26,7 @@ const LeftBar = () => {
         <div className="menu">
           <div className="user">
             <img
-              src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "/upload/tuna.png"}
+              src={currentUser.profilePic}
               alt=""
               onError={(e) => (e.target.src = "")}
             />

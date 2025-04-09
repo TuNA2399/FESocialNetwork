@@ -88,7 +88,7 @@ const Navbar = () => {
                     setSearchTerm("");
                   }}
                 >
-                  <img src={`/upload/${user.profilePic}`} alt="" />
+                  <img src={user.profilePic} alt="" />
                   <span>{user.name}</span>
                 </Link>
               ))}
@@ -103,7 +103,7 @@ const Navbar = () => {
         <NotificationsOutlinedIcon />
         <Link style={{ textDecoration: "none" }} to={`/profile/${currentUser.id}`}>
           <div className="user">
-            <img src={`/upload/${currentUser.profilePic}`} alt="" />
+            <img src={currentUser.profilePic} alt="" />
             <span>{currentUser.name}</span>
           </div>
         </Link>

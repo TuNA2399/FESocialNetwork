@@ -86,7 +86,7 @@ const Post = ({ post }) => {
         <div className="user">
           <div className="userInfo">
             <img
-              src={post.profilePic ? `/upload/${post.profilePic}` : "/upload/tuna.png"}
+              src={post.profilePic}
               alt="avt"
               onError={(e) => (e.target.src = "")}
             />

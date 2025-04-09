@@ -3,18 +3,23 @@ import "./update.scss";
 import { makeRequest } from "../../axios";
 import { AuthContext } from "../../context/authContext";
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from "axios";
 
 const Update = ({ setOpenUpdate, user }) => {
     const { currentUser, setCurrentUser } = useContext(AuthContext);
     const [cover, setCover] = useState(null);
     const [profile, setProfile] = useState(null);
 
+    const getSignature = async () => {
+        const res = await makeRequest.get("/signature");
+        return res.data;
+    };
+
     const [text, setText] = useState({
         name: "",
         city: "",
         website: "",
     });
-    console.log(currentUser);
 
     const fetchCurrentUser = async () => {
         const res = await makeRequest.get(`/users/find/${currentUser.id}`);
@@ -31,13 +36,24 @@ const Update = ({ setOpenUpdate, user }) => {
 
     const upload = async (file) => {
         try {
+            const signatureData = await getSignature();
+
             const formData = new FormData();
             formData.append("file", file);
-            const res = await makeRequest.post("/upload", formData);
-            return res.data;
+            formData.append("api_key", signatureData.apiKey);
+            formData.append("timestamp", signatureData.timestamp);
+            formData.append("signature", signatureData.signature);
+            formData.append("folder", signatureData.folder);
+            formData.append("upload_preset", signatureData.uploadPreset);
+
+            const cloudinaryRes = await axios.post(
+                `https://api.cloudinary.com/v1_1/${signatureData.cloudName}/auto/upload`,
+                formData
+            );
+
+            return cloudinaryRes.data.secure_url;
         } catch (err) {
-            console.error(err);
-            return null;
+            console.error("Cloudinary upload error:", err);
         }
     };
 

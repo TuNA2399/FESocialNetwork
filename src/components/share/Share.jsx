@@ -70,8 +70,6 @@ const Share = () => {
             <img
               src={
                 currentUser.profilePic
-                  ? `/upload/${currentUser.profilePic}`
-                  : "/upload/tuna.png"
               }
               alt=""
               onError={(e) => (e.target.src = "")}
