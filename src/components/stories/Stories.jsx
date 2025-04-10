@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/authContext";
 import { useState, useContext } from "react";
 import { makeRequest } from "../../axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 
 const Stories = () => {
   const { currentUser } = useContext(AuthContext);
@@ -29,12 +30,24 @@ const Stories = () => {
 
   const upload = async (file) => {
     try {
+      const signatureResponse = await makeRequest.get("/signature");
+  
       const formData = new FormData();
       formData.append("file", file);
-      const res = await makeRequest.post("/upload", formData);
-      return res.data;
+      formData.append("api_key", signatureResponse.data.apiKey);
+      formData.append("timestamp", signatureResponse.data.timestamp);
+      formData.append("signature", signatureResponse.data.signature);
+      formData.append("folder", signatureResponse.data.folder);
+      formData.append("upload_preset", signatureResponse.data.uploadPreset); // ✅ Add this line!
+  
+      const cloudinaryResponse = await axios.post(
+        `https://api.cloudinary.com/v1_1/${signatureResponse.data.cloudName}/image/upload`,
+        formData
+      );
+  
+      return cloudinaryResponse.data.secure_url;
     } catch (err) {
-      console.log(err);
+      console.error("Error uploading to Cloudinary:", err.response?.data || err.message);
       return "";
     }
   };
@@ -48,6 +61,8 @@ const Stories = () => {
       if (imgUrl) {
         mutation.mutate({ img: imgUrl });
         setFile(null);
+      } else {
+        console.error("Image upload failed, no URL returned");
       }
     }
   };
@@ -56,9 +71,7 @@ const Stories = () => {
     <div className="stories">
       <div className="story">
         <img
-          src={
-            currentUser.profilePic
-          }
+          src={currentUser.profilePic}
           alt="story"
           onError={(e) => (e.target.src = "")}
         />
