@@ -108,7 +108,7 @@ const Post = ({ post }) => {
         <div className="content">
           <p>{post.desc}</p>
           <img
-            src={post.img ? `/upload/${post.img}` : "/upload/tuna.png"}
+            src={post.img}
             alt="Post"
             onError={(e) => (e.target.src = "")}
           />

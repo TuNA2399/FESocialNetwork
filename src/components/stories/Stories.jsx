@@ -84,7 +84,7 @@ const Stories = () => {
         data?.map((story) => (
           <div className="story" key={story.id}>
             <img
-              src={`/upload/${story.img}`}
+              src={story.img}
               alt={story.name}
               onError={(e) => (e.target.src = "")}
             />

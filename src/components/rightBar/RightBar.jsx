@@ -71,10 +71,7 @@ const RightBar = () => {
                       <div className="userInfo">
                         <img
                           src={
-                            user.profilePic
-                              ? "/upload/" + user.profilePic
-                              : "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"
-                          }
+                            user.profilePic}
                           alt={user.name}
                         />
                         <span>{user.name}</span>
@@ -116,7 +113,7 @@ const RightBar = () => {
                   <div className="user" key={user.id}>
                     <div className="userInfo">
                       <img
-                        src={`/upload/${user.profilePic}` || "https://images.pexels.com/photos/13916254/pexels-photo-13916254.jpeg?auto=compress&cs=tinysrgb&w=1600&lazy=load"}
+                        src={user.profilePic}
                         alt={user.name}
                       />
                       <div className="online" />
