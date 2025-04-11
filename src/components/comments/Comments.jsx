@@ -39,7 +39,7 @@ const Comments = ({ postId }) => {
     <div className="comments">
       <div className="write">
         <img
-          src={currentUser.profilePic ? `/upload/${currentUser.profilePic}` : "/upload/tuna.png"}
+          src={currentUser.profilePic}
           alt="avt"
           onError={(e) => (e.target.src = "")}
         />
@@ -51,7 +51,7 @@ const Comments = ({ postId }) => {
         : data.map((comment) => (
           <div className="comment" key={comment.div}>
             <img
-              src={comment.profilePic ? `/upload/${comment.profilePic}` : "/upload/tuna.png"}
+              src={comment.profilePic}
               alt="cmt"
               onError={(e) => (e.target.src = "")}
             />
