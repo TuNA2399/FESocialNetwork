@@ -15,9 +15,13 @@ export const AuthContextProvider = ({ children }) => {
         inputs,
         { withCredentials: true }
       );
-      setCurrentUser(res.data);
+
+      setCurrentUser(res.data.user);
+
+      return res.data;
     } catch (err) {
       console.error("Login failed:", err);
+      throw err;
     }
   };
 
