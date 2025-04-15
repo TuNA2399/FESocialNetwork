@@ -4,10 +4,13 @@ import { AuthContext } from "../../context/authContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../../axios";
 import moment from "moment";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+
 
 const Comments = ({ postId }) => {
   const { currentUser } = useContext(AuthContext);
   const [desc, setDesc] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["comments"],
@@ -35,6 +38,22 @@ const Comments = ({ postId }) => {
     setDesc("");
   }
 
+  const deleteMutation = useMutation({
+    mutationFn: async (commentId) => {
+      console.log("Deleting comment with ID: ", commentId);
+      return await makeRequest.delete(`/comments/${commentId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["comments"]);
+    },
+  });
+
+  const handleDelete = (commentId) => {
+    console.log("Comment ID being deleted:", commentId);
+    deleteMutation.mutate(commentId);
+  };
+
+
   return (
     <div className="comments">
       <div className="write">
@@ -60,7 +79,12 @@ const Comments = ({ postId }) => {
               <p>{comment.desc}</p>
             </div>
             <span className="date">{moment(comment.createdAt).fromNow()}</span>
+            {comment.userId === currentUser.id && (<MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />)}
+            {menuOpen && comment.userId === currentUser.id && (
+              <button onClick={() => handleDelete(comment.id)}>Delete</button>
+            )}
           </div>
+
         ))}
     </div>
   );
