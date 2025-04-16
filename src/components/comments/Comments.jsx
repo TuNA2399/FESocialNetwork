@@ -8,24 +8,25 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const Comments = ({ postId }) => {
   const { currentUser } = useContext(AuthContext);
+
   const [desc, setDesc] = useState("");
   const [activeMenuId, setActiveMenuId] = useState(null);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
   const queryClient = useQueryClient();
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["comments", postId],
     queryFn: async () => {
-      const res = await makeRequest.get("/comments?postId=" + postId);
+      const res = await makeRequest.get(`/comments?postId=${postId}`);
       return res.data;
     },
   });
 
-  const mutation = useMutation({
-    mutationFn: async (newComment) => {
-      const res = await makeRequest.post("/comments", newComment);
-      return res.data;
-    },
+  const createMutation = useMutation({
+    mutationFn: async (newComment) =>
+      await makeRequest.post("/comments", newComment),
     onSuccess: () => {
       queryClient.invalidateQueries(["comments", postId]);
       setDesc("");
@@ -33,18 +34,26 @@ const Comments = ({ postId }) => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (commentId) => {
-      return await makeRequest.delete(`/comments/${commentId}`);
-    },
+    mutationFn: async (commentId) =>
+      await makeRequest.delete(`/comments/${commentId}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["comments", postId]);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async ({ commentId, desc }) =>
+      await makeRequest.put(`/comments/${commentId}`, { desc }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["comments", postId]);
+      setEditingCommentId(null);
     },
   });
 
   const handleSend = (e) => {
     e.preventDefault();
     if (!desc.trim()) return;
-    mutation.mutate({ desc, postId });
+    createMutation.mutate({ desc, postId });
   };
 
   const handleDelete = (commentId) => {
@@ -52,13 +61,26 @@ const Comments = ({ postId }) => {
     setActiveMenuId(null);
   };
 
+  const handleUpdate = (commentId, currentDesc) => {
+    setEditingCommentId(commentId);
+    setEditingText(currentDesc);
+    setActiveMenuId(null);
+  };
+
+  const handleSaveUpdate = (commentId) => {
+    if (editingText.trim()) {
+      updateMutation.mutate({ commentId, desc: editingText });
+    }
+  };
+
   return (
     <div className="comments">
+      {/* Write a comment */}
       <div className="write">
         <img
           src={currentUser.profilePic}
           alt="avatar"
-          onError={(e) => (e.target.src = "")}
+          onError={(e) => (e.target.src = "/default-avatar.png")}
         />
         <input
           type="text"
@@ -69,6 +91,7 @@ const Comments = ({ postId }) => {
         <button onClick={handleSend}>Send</button>
       </div>
 
+      {/* Comment list */}
       {isLoading ? (
         <p>Loading...</p>
       ) : error ? (
@@ -81,10 +104,26 @@ const Comments = ({ postId }) => {
               alt="comment"
               onError={(e) => (e.target.src = "/default-avatar.png")}
             />
+
             <div className="info">
               <span>{comment.name}</span>
-              <p>{comment.desc}</p>
+
+              {editingCommentId === comment.id ? (
+                <div className="edit-box">
+                  <input
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                  />
+                  <button onClick={() => handleSaveUpdate(comment.id)}>
+                    Save
+                  </button>
+                </div>
+              ) : (
+                <p>{comment.desc}</p>
+              )}
             </div>
+
             <span className="date">{moment(comment.createdAt).fromNow()}</span>
 
             {comment.userId === currentUser.id && (
@@ -97,10 +136,16 @@ const Comments = ({ postId }) => {
                     )
                   }
                 />
+
                 {activeMenuId === comment.id && (
-                  <button className="delete-btn" onClick={() => handleDelete(comment.id)}>
-                    Delete
-                  </button>
+                  <div className="comment-menu">
+                    <button onClick={() => handleUpdate(comment.id, comment.desc)}>
+                      Update
+                    </button>
+                    <button onClick={() => handleDelete(comment.id)}>
+                      Delete
+                    </button>
+                  </div>
                 )}
               </>
             )}
