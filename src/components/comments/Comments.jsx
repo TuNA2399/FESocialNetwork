@@ -6,21 +6,20 @@ import { makeRequest } from "../../axios";
 import moment from "moment";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-
 const Comments = ({ postId }) => {
   const { currentUser } = useContext(AuthContext);
   const [desc, setDesc] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeMenuId, setActiveMenuId] = useState(null);
+
+  const queryClient = useQueryClient();
 
   const { isLoading, error, data } = useQuery({
-    queryKey: ["comments"],
+    queryKey: ["comments", postId],
     queryFn: async () => {
       const res = await makeRequest.get("/comments?postId=" + postId);
       return res.data;
-    }
+    },
   });
-
-  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (newComment) => {
@@ -28,64 +27,86 @@ const Comments = ({ postId }) => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["comments"])
-    },
-  })
-
-  const handleClick = async (e) => {
-    e.preventDefault();
-    mutation.mutate({ desc, postId })
-    setDesc("");
-  }
-
-  const deleteMutation = useMutation({
-    mutationFn: async (commentId) => {
-      console.log("Deleting comment with ID: ", commentId);
-      return await makeRequest.delete(`/comments/${commentId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["comments"]);
+      queryClient.invalidateQueries(["comments", postId]);
+      setDesc("");
     },
   });
 
-  const handleDelete = (commentId) => {
-    console.log("Comment ID being deleted:", commentId);
-    deleteMutation.mutate(commentId);
+  const deleteMutation = useMutation({
+    mutationFn: async (commentId) => {
+      return await makeRequest.delete(`/comments/${commentId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["comments", postId]);
+    },
+  });
+
+  const handleSend = (e) => {
+    e.preventDefault();
+    if (!desc.trim()) return;
+    mutation.mutate({ desc, postId });
   };
 
+  const handleDelete = (commentId) => {
+    deleteMutation.mutate(commentId);
+    setActiveMenuId(null);
+  };
 
   return (
     <div className="comments">
       <div className="write">
         <img
           src={currentUser.profilePic}
-          alt="avt"
+          alt="avatar"
           onError={(e) => (e.target.src = "")}
         />
-        <input type="text" placeholder="Write a comment" onChange={(e) => setDesc(e.target.value)} value={desc} />
-        <button onClick={handleClick}>Send</button>
+        <input
+          type="text"
+          placeholder="Write a comment"
+          onChange={(e) => setDesc(e.target.value)}
+          value={desc}
+        />
+        <button onClick={handleSend}>Send</button>
       </div>
-      {isLoading
-        ? "loading"
-        : data.map((comment) => (
-          <div className="comment" key={comment.div}>
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : error ? (
+        <p>Error loading comments.</p>
+      ) : (
+        data?.map((comment) => (
+          <div className="comment" key={comment.id}>
             <img
-              src={comment.profilePic}
-              alt="cmt"
-              onError={(e) => (e.target.src = "")}
+              src={comment.profilePic || "/default-avatar.png"}
+              alt="comment"
+              onError={(e) => (e.target.src = "/default-avatar.png")}
             />
             <div className="info">
               <span>{comment.name}</span>
               <p>{comment.desc}</p>
             </div>
             <span className="date">{moment(comment.createdAt).fromNow()}</span>
-            {comment.userId === currentUser.id && (<MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />)}
-            {menuOpen && comment.userId === currentUser.id && (
-              <button onClick={() => handleDelete(comment.id)}>Delete</button>
+
+            {comment.userId === currentUser.id && (
+              <>
+                <MoreHorizIcon
+                  className="menu-icon"
+                  onClick={() =>
+                    setActiveMenuId(
+                      activeMenuId === comment.id ? null : comment.id
+                    )
+                  }
+                />
+                {activeMenuId === comment.id && (
+                  <button className="delete-btn" onClick={() => handleDelete(comment.id)}>
+                    Delete
+                  </button>
+                )}
+              </>
             )}
           </div>
-
-        ))}
+        ))
+      )}
     </div>
   );
 };
