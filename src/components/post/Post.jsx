@@ -35,8 +35,8 @@ const Post = ({ post }) => {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["likes"])
-    },
+      queryClient.invalidateQueries(["likes", post.id]);
+    }
   })
 
   const mutationDislike = useMutation({
@@ -102,7 +102,7 @@ const Post = ({ post }) => {
           </div>
           <MoreHorizIcon onClick={() => setMenuOpen(!menuOpen)} />
           {menuOpen && post.userId === currentUser.id && (
-            <button onClick={handleDelete}>Delete</button>
+            <button className="deleteMenu" onClick={handleDelete}>Delete</button>
           )}
         </div>
         <div className="content">

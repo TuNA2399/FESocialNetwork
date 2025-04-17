@@ -13,9 +13,28 @@
       padding: 20px;
 
       .user {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
+
+        .deleteMenu {
+          position: absolute;
+          top: 40px;
+          right: 0;
+          background-color: themed("bg");
+          border: 1px solid themed("border");
+          border-radius: 6px;
+          padding: 6px 12px;
+          z-index: 10;
+          cursor: pointer;
+          font-size: 14px;
+          color: red;
+
+          &:hover {
+            background-color: rgba(255, 0, 0, 0.05);
+          }
+        }
 
         .userInfo {
           display: flex;
@@ -65,6 +84,11 @@
           gap: 10px;
           cursor: pointer;
           font-size: 14px;
+          transition: all 0.2s ease;
+
+          &:hover {
+            color: #5271ff;
+          }
         }
       }
     }
