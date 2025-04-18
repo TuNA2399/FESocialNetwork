@@ -60,11 +60,15 @@ const Navbar = () => {
     }
   };
 
-  const handleLogout = () => {
-    // logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await makeRequest.post("/auth/logout");
+      logout();
+      navigate("/login");
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
-
   return (
     <div className="navbar">
       <div className="left">
