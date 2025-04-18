@@ -7,7 +7,7 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { AuthContext } from "../../context/authContext";
 import { useState, useContext, useRef, useEffect } from "react";
@@ -16,17 +16,23 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
   const { toggle, darkMode } = useContext(DarkModeContext);
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, logout } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const queryClient = useQueryClient();
-
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const searchRef = useRef();
+  const avatarRef = useRef();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (searchRef.current && !searchRef.current.contains(event.target)) {
+      if (
+        searchRef.current && !searchRef.current.contains(event.target) &&
+        avatarRef.current && !avatarRef.current.contains(event.target)
+      ) {
         setUsers([]);
+        setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -52,6 +58,11 @@ const Navbar = () => {
     } else {
       setUsers([]);
     }
+  };
+
+  const handleLogout = () => {
+    // logout();
+    navigate("/login");
   };
 
   return (
@@ -101,12 +112,16 @@ const Navbar = () => {
         <PersonOutlinedIcon />
         <EmailOutlinedIcon />
         <NotificationsOutlinedIcon />
-        <Link style={{ textDecoration: "none" }} to={`/profile/${currentUser.id}`}>
-          <div className="user">
-            <img src={currentUser.profilePic} alt="" />
-            <span>{currentUser.name}</span>
-          </div>
-        </Link>
+        <div className="user" ref={avatarRef} onClick={() => setDropdownOpen(!dropdownOpen)}>
+          <img src={currentUser.profilePic} alt="" />
+          <span>{currentUser.name}</span>
+          {dropdownOpen && (
+            <div className="dropdown">
+              <Link to={`/profile/${currentUser.id}`} onClick={() => setDropdownOpen(false)}>Profile</Link>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

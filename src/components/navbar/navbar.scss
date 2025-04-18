@@ -5,8 +5,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
-    height: 50px;
+    padding: 12px 24px;
+    height: 60px;
     border-bottom: 1px solid themed("border");
     position: sticky;
     top: 0;
@@ -21,8 +21,24 @@
 
       span {
         font-weight: bold;
-        font-size: 20px;
+        font-size: 22px;
         color: themed("logo");
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: themed("textColorSoft");
+        }
+      }
+
+      svg {
+        cursor: pointer;
+        transition: transform 0.2s, color 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+          color: themed("logo");
+        }
       }
 
       .search {
@@ -31,8 +47,8 @@
         align-items: center;
         gap: 10px;
         border: 1px solid themed("border");
-        border-radius: 5px;
-        padding: 5px;
+        border-radius: 8px;
+        padding: 6px 10px;
         background-color: themed("bgSoft");
         transition: box-shadow 0.3s;
 
@@ -42,6 +58,7 @@
           background-color: transparent;
           color: themed("textColor");
           outline: none;
+          font-size: 14px;
 
           @include mobile {
             display: none;
@@ -108,22 +125,95 @@
         display: none;
       }
 
+      svg {
+        cursor: pointer;
+        transition: transform 0.2s, color 0.2s;
+
+        &:hover {
+          transform: scale(1.1);
+          color: themed("logo");
+        }
+      }
+
       .user {
+        position: relative;
         display: flex;
         align-items: center;
         gap: 10px;
         font-weight: 500;
+        cursor: pointer;
+        padding: 5px 10px;
+        border-radius: 20px;
+        transition: background-color 0.2s;
 
         @include tablet {
           display: none;
         }
 
+        &:hover {
+          background-color: themed("bgSoft");
+        }
+
         img {
-          width: 30px;
-          height: 30px;
+          width: 34px;
+          height: 34px;
           border-radius: 50%;
           object-fit: cover;
+          transition: box-shadow 0.3s;
+
+          &:hover {
+            box-shadow: 0 0 0 2px themed("logo");
+          }
         }
+      }
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background-color: themed("bg");
+      border: 1px solid themed("border");
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 10px 0;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      min-width: 140px;
+      animation: fadeIn 0.2s ease-in-out;
+
+      a,
+      button {
+        background: none;
+        border: none;
+        text-align: left;
+        padding: 12px 20px;
+        font-size: 14px;
+        color: themed("textColor");
+        text-decoration: none;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+
+        &:hover {
+          background-color: themed("bgSoft");
+          color: themed("logo");
+        }
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
   }
