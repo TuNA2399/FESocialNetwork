@@ -1,7 +1,7 @@
 $themes: (
   light: (
     textColor: #000,
-    bg: white,
+    bg: #fff,
     logo: darkblue,
     bgSoft: #f6f3f3,
     textColorSoft: #555,
@@ -10,17 +10,18 @@ $themes: (
   dark: (
     textColor: whitesmoke,
     bg: #222,
-    logo: white,
+    logo: #fff,
     bgSoft: #333,
     textColorSoft: lightgray,
     border: #444,
-  ),
+  )
 );
 
 @mixin themify($themes) {
   @each $theme, $map in $themes {
     .theme-#{$theme} & {
       $theme-map: () !global;
+
       @each $key, $submap in $map {
         $value: map-get(map-get($themes, $theme), "#{$key}");
         $theme-map: map-merge(
@@ -30,7 +31,9 @@ $themes: (
           )
         ) !global;
       }
+
       @content;
+
       $theme-map: null !global;
     }
   }
@@ -45,6 +48,7 @@ $themes: (
     @content;
   }
 }
+
 @mixin tablet {
   @media (max-width: 960px) {
     @content;
